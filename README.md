@@ -7,7 +7,7 @@ Extract the MIME type of a file with React Native on iOS and Android (uses Java 
 ## Installation
 
 ```sh
-npm install react-native-file-utils
+npm install @qeepsake/react-native-file-utils
 ```
 
 ## Usage
