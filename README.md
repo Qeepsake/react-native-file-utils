@@ -1,5 +1,7 @@
 # Qeepsake react-native-file-utils
 
+## NOTE: Currently a work in progress. Not production ready.
+
 Extract the MIME type of a file with React Native on iOS and Android (uses Java and Obj-C, not Node).
 
 ## Installation
