@@ -12,7 +12,7 @@ npm install @qeepsake/react-native-file-utils
 
 ## Usage
 
-### Get video file duration
+### Get the duration of video file
 
 Gets the duration in milliseconds of the video at the file path on the device that's passed.
 
@@ -22,7 +22,7 @@ import { getDuration } from '@qeepsake/react-native-file-utils';
 const durationMs = await getDuration('file://<media-path>', 'video');
 ```
 
-### Get media file's dimensions in pixels
+### Get the media file dimensions in pixels
 
 Gets the horizontal (x) and vertical (y) pixels of the media item, either image or video. The returned media dimensions includes both the horizontal (x) length in pixels and vertical (y) length in pixels.
 
@@ -32,7 +32,7 @@ import { getDimensions } from '@qeepsake/react-native-file-utils';
 const mediaDimensions = await getDimensions('file://<media-path>', 'video');
 ```
 
-### Get media file mime type
+### Get the media type of a media item file
 
 Gets the Mime type of the media file at the passed Uri.
 
@@ -42,7 +42,7 @@ import { getMimeType } from '@qeepsake/react-native-file-utils';
 const mimeType = await getMimeType('file://<media-path>');
 ```
 
-### Get timestamp on the media item
+### Get the timestamp of a media item file
 
 Gets the timestamp (js Date) of the media file at the passed Uri.
 
