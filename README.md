@@ -1,8 +1,8 @@
-# Qeepsake react-native-file-utils
+# Qeepsake React Native File Utils
 
 ## NOTE: Currently a work in progress. Not production ready.
 
-Extract the MIME type of a file with React Native on iOS and Android (uses Java and Obj-C, not Node).
+Extracts information about media files including MIME type, duration (vide), dimensions, or timestamp of a media file with React Native on iOS and Android (uses Java and Obj-C, not Node).
 
 ## Installation
 
@@ -32,9 +32,9 @@ import { getDimensions } from '@qeepsake/react-native-file-utils';
 const mediaDimensions = await getDimensions('file://<media-path>', 'video');
 ```
 
-### Get the media type of a media item file
+### Get the MIME type of a media item file
 
-Gets the Mime type of the media file at the passed Uri.
+Gets the MIME type of the media file at the passed Uri.
 
 ```js
 import { getMimeType } from '@qeepsake/react-native-file-utils';
