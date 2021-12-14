@@ -14,12 +14,12 @@ npm install @qeepsake/react-native-file-utils
 
 ### Get the duration of video file
 
-Gets the duration in milliseconds of the video at the file path on the device that's passed.
+Gets the duration of the video in seconds.
 
 ```js
 import { getDuration } from '@qeepsake/react-native-file-utils';
 
-const durationMs = await getDuration('file://<media-path>', 'video');
+const durationMs = await getDuration('file://<media-path>');
 ```
 
 ### Get the media file dimensions in pixels
