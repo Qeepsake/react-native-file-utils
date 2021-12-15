@@ -88,18 +88,46 @@ RCT_EXPORT_METHOD(
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
 {
-    UIImage *image = [UIImage imageWithContentsOfFile:path];
-    NSData* imageData =  UIImageJPEGRepresentation(image, 1.0);
-    CGImageSourceRef sourceRef = CGImageSourceCreateWithData((CFDataRef)imageData, NULL);
-    
-    NSDictionary *metadata = (__bridge NSDictionary *)CGImageSourceCopyPropertiesAtIndex(sourceRef,0,NULL);
-    NSDictionary *exif = [metadata objectForKey:(NSString *)kCGImagePropertyTIFFDictionary];
-    NSDictionary *datetime = [exif objectForKey:(NSString *)kCGImagePropertyExifDateTimeOriginal];
-    
-    resolve(datetime);
-}
+    NSURL *referenceUrl = [NSURL URLWithString:path];
+    CGImageSourceRef sourceRef = CGImageSourceCreateWithURL((CFURLRef)referenceUrl, NULL);
 
-@end
+    if (sourceRef != NULL)
+    {
+        NSDictionary *metadata = (__bridge NSDictionary*)CGImageSourceCopyPropertiesAtIndex(sourceRef,0,NULL);
+        NSDictionary *exif = [metadata objectForKey:(NSString *)kCGImagePropertyTIFFDictionary];
+        NSDictionary *datetime = [exif objectForKey:(NSString *)kCGImagePropertyExifDateTimeOriginal];
+
+        resolve(datetime);
+    }
+    else {
+        reject(
+               @"QSRNFU-20",
+               @"The path provided is malformed. Unable to obtain a reference URL from the path.",
+               nil
+               );
+    }
+    
+//    UIImage *image = [UIImage imageWithContentsOfFile:path];
+//    NSData* imageData =  UIImageJPEGRepresentation(image, 1.0);
+//    CGImageSourceRef sourceRef = CGImageSourceCreateWithData((CFDataRef)imageData, NULL);
+//
+//    NSDictionary *metadata = (__bridge NSDictionary *)CGImageSourceCopyPropertiesAtIndex(sourceRef,0,NULL);
+//    NSDictionary *exif = [metadata objectForKey:(NSString *)kCGImagePropertyTIFFDictionary];
+//    NSDictionary *datetime = [exif objectForKey:(NSString *)kCGImagePropertyExifDateTimeOriginal];
+  
+//    NSData* pngData = [NSData dataWithContentsOfFile:path];
+//
+//     CGImageSourceRef mySourceRef = CGImageSourceCreateWithData((CFDataRef)pngData, NULL);
+//     if (mySourceRef != NULL)
+//     {
+//         NSDictionary *exif = (__bridge NSDictionary *)CGImageSourceCopyPropertiesAtIndex(mySourceRef,0,NULL);
+//         CFRelease(mySourceRef);
+//
+//         NSDictionary *mutableExif = [exif mutableCopy];
+//         [mutableExif setValue:path forKey:@"originalUri"];
+//         resolve(mutableExif);
+//     }
+}
 
 /**
  * Gets the pixel dimensions, height and width (x,y), of the video or image file based on the file path passed in.
@@ -108,36 +136,69 @@ RCT_EXPORT_METHOD(
  * @returns The height and width (x,y), of the video or image in pixels.
  */
 RCT_EXPORT_METHOD(
-                  getDimensions:(NSString *)path (NSString *)type
+                  getDimensions:(NSString *)path
+                  type: (NSString *)type
                   resolver: (RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
 {
-    if (type == "image") {
-        UIImage *image = [UIImage imageWithContentsOfFile:path];
+    NSURL *referenceUrl = [NSURL URLWithString:path];
+    
+    if ([type isEqualToString:@"image"]) {
+        CGImageSourceRef sourceRef = CGImageSourceCreateWithURL((CFURLRef)referenceUrl, NULL);
         
-        if (image == nil) {
+        if (sourceRef == nil) {
             reject(
-                   @"QSRNFU-20",
+                   @"QSRNFU-30",
                    @"The method could not initialize the image from the specified file",
                    nil
                    );
             return;
         }
         
-        resolve(image.size.width, image.size.height)
+        CGFloat width = 0.0f, height = 0.0f;
+        CFDictionaryRef imageProperties = CGImageSourceCopyPropertiesAtIndex(sourceRef, 0, NULL);
+        CFRelease(sourceRef);
+        
+        CFNumberRef widthNum  = CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelWidth);
+        if (widthNum != NULL) {
+            CFNumberGetValue(widthNum, kCFNumberCGFloatType, &width);
+        }
+
+        CFNumberRef heightNum = CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelHeight);
+        if (heightNum != NULL) {
+            CFNumberGetValue(heightNum, kCFNumberCGFloatType, &height);
+        }
+        
+        NSDictionary *dimensions = @{
+              @"height":@(height),
+              @"width":@(width),
+              };
+        
+        resolve(dimensions);
         return;
-    } else if (type == "video"){
-        let url = AVURLAsset(url: path, options: nil)
-        AVURLAsset *asset = [AVURLAsset URLAssetWithURL:url options:nil];
+    } else if ([type isEqualToString:@"video"]){
+        AVURLAsset *asset = [AVURLAsset URLAssetWithURL:referenceUrl options:nil];
         NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
         
         if ([tracks count] > 0) {
             AVAssetTrack *track = [tracks objectAtIndex:0];
-            return track.naturalSize;
+            
+            NSDictionary *dimensions = @{
+                  @"height":@(track.naturalSize.height),
+                  @"width":@(track.naturalSize.width),
+                  };
+            
+            resolve(dimensions);
+            return;
         }
 
-        resolve(CGSizeMake(0, 0));
+        NSDictionary *dimensions = @{
+              @"height":@0,
+              @"width":@0,
+              };
+        
+        resolve(dimensions);
         return;
     }
 }

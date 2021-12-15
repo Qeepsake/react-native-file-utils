@@ -21,7 +21,6 @@ const FileUtils = NativeModules.FileUtils
 /**
  * Gets the duration of the video in seconds.
  * @param uri The full on device uri for the media item.
- * @param mediaType - Either 'image' or 'video. If passing an image, 0 will always be returned.
  * @returns Duration of the video in number of seconds.
  */
 export function getDuration(uri: string): Promise<number> {

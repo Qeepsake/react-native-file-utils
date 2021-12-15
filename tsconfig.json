@@ -2,7 +2,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "react-native-file-utils": ["./src/index"]
+      "@qeepsake/react-native-file-utils": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
