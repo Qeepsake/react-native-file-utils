@@ -16,10 +16,10 @@ export default function App() {
     // getDuration('file://test').then(setResult);
   }, []);
 
-  const launchPicker = async () => {
+  const launchPicker = async (pickUsing: 'id' | 'file path') => {
     const pickerResult = await launchImageLibrary({
-      mediaType: 'mixed',
       includeExtra: true,
+      mediaType: 'photo',
     });
 
     setResult(0);
@@ -51,15 +51,24 @@ export default function App() {
     console.log('mimeType:');
     console.dir(mimeType);
 
-    const timestamp = await getTimestamp(uri);
-    console.log('timestamp:');
-    console.dir(timestamp);
+    if (pickUsing === 'file path') {
+      const timestamp = await getTimestamp(uri, mediaType);
+      console.log('timestamp:');
+      console.dir(timestamp);
+    } else {
+      const timestamp = await getTimestamp(firstAsset.id!, mediaType);
+      console.dir(timestamp);
+    }
   };
 
   return (
     <View style={styles.container}>
       <Text>Result: {result}</Text>
-      <Button onPress={() => launchPicker()} title="Pick" />
+      <Button onPress={() => launchPicker('id')} title="Pick using asset id" />
+      <Button
+        onPress={() => launchPicker('file path')}
+        title="Pick using file path"
+      />
     </View>
   );
 }

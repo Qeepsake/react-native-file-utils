@@ -2,9 +2,11 @@
 #import <Foundation/Foundation.h>
 #import <Photos/Photos.h>
 #import <PhotosUI/PhotosUI.h>
+#import <AssetsLibrary/AssetsLibrary.h>
 #import <math.h>
-
 #import "FileUtils.h"
+
+@import Photos;
 
 @implementation FileUtils
 
@@ -77,56 +79,74 @@ RCT_EXPORT_METHOD(
 }
 
 /**
- * Gets the timestamp of the video or image file based on the file path passed in. The  timestamp is retrieved from the Exif data on the
- * image or video file.
+ * Gets the original date time of the video or image file based on the path passed in. The timestamp is retrieved from the Exif data on the
+ * image or video file. Note: Either asset-libarary path or full file path may be passed in.
  * @param path - The video or image file path to get the timestamp of.
  * @returns The datetime of the image or video file from the file's Exif data.
  */
 RCT_EXPORT_METHOD(
                   getTimestamp:(NSString *)path
+                  fileType:(NSString *)type
                   resolver: (RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
 {
-    NSURL *referenceUrl = [NSURL URLWithString:path];
-    CGImageSourceRef sourceRef = CGImageSourceCreateWithURL((CFURLRef)referenceUrl, NULL);
+    // Path for getting exif from asset id if image or creation date for video
+    if(![path hasPrefix:@"file:///"]) {
+        PHAsset* asset = [PHAsset fetchAssetsWithLocalIdentifiers:@[path] options:nil].firstObject;
+        PHContentEditingInputRequestOptions *editOptions = [[PHContentEditingInputRequestOptions alloc]init];
+        editOptions.networkAccessAllowed = YES;
+        
+        // If image, use exif data
+        if ([type isEqualToString:@"image"]) {
+            [asset requestContentEditingInputWithOptions:editOptions completionHandler:^(PHContentEditingInput *contentEditingInput, NSDictionary *info) {
+                CIImage *image = [CIImage imageWithContentsOfURL:contentEditingInput.fullSizeImageURL];
+                NSDictionary *properties = image.properties;
+                NSDictionary *exif = [properties objectForKey:(NSString *)kCGImagePropertyExifDictionary];
+                NSDictionary *datetime = [exif objectForKey:(NSString *)kCGImagePropertyExifDateTimeOriginal];
+                resolve(datetime);
+                return;
+            }];
+        
+        // If not an image, get last modified date
+        } else {
+            resolve(asset.creationDate);
+            return;
+        }
 
-    if (sourceRef != NULL)
-    {
-        NSDictionary *metadata = (__bridge NSDictionary*)CGImageSourceCopyPropertiesAtIndex(sourceRef,0,NULL);
-        NSDictionary *exif = [metadata objectForKey:(NSString *)kCGImagePropertyTIFFDictionary];
-        NSDictionary *datetime = [exif objectForKey:(NSString *)kCGImagePropertyExifDateTimeOriginal];
-
-        resolve(datetime);
+    // Path for getting exif from file path if image or creation date for video
+    } else {
+        NSString *prefixToRemove = @"file:///";
+        NSString *pathWithoutFilePrefix = [path copy];
+        if ([path hasPrefix:prefixToRemove])
+            pathWithoutFilePrefix = [path substringFromIndex:[prefixToRemove length]];
+        
+        // If image, use exif data
+        if ([type isEqualToString:@"image"]) {
+            NSData* fileData = [NSData dataWithContentsOfFile:pathWithoutFilePrefix];
+            CGImageSourceRef mySourceRef = CGImageSourceCreateWithData((CFDataRef)fileData, NULL);
+            if (mySourceRef != NULL)
+            {
+                NSDictionary *properties = (__bridge NSDictionary *)CGImageSourceCopyPropertiesAtIndex(mySourceRef,0,NULL);
+                NSDictionary *exif = [properties objectForKey:(NSString *)kCGImagePropertyExifDictionary];
+                NSDictionary *datetime = [exif objectForKey:(NSString *)kCGImagePropertyExifDateTimeOriginal];
+                resolve(datetime);
+                return;
+            }
+            
+        // If not an image, get last modified date
+        } else {
+            NSError *error = nil;
+            NSURL *fileUrl = [NSURL fileURLWithPath:pathWithoutFilePrefix];
+            NSDate *fileDate;
+            [fileUrl getResourceValue:&fileDate forKey:NSURLContentModificationDateKey error:&error];
+            if (!error)
+            {
+                resolve(fileDate);
+                return;
+            }
+        }
     }
-    else {
-        reject(
-               @"QSRNFU-20",
-               @"The path provided is malformed. Unable to obtain a reference URL from the path.",
-               nil
-               );
-    }
-    
-//    UIImage *image = [UIImage imageWithContentsOfFile:path];
-//    NSData* imageData =  UIImageJPEGRepresentation(image, 1.0);
-//    CGImageSourceRef sourceRef = CGImageSourceCreateWithData((CFDataRef)imageData, NULL);
-//
-//    NSDictionary *metadata = (__bridge NSDictionary *)CGImageSourceCopyPropertiesAtIndex(sourceRef,0,NULL);
-//    NSDictionary *exif = [metadata objectForKey:(NSString *)kCGImagePropertyTIFFDictionary];
-//    NSDictionary *datetime = [exif objectForKey:(NSString *)kCGImagePropertyExifDateTimeOriginal];
-  
-//    NSData* pngData = [NSData dataWithContentsOfFile:path];
-//
-//     CGImageSourceRef mySourceRef = CGImageSourceCreateWithData((CFDataRef)pngData, NULL);
-//     if (mySourceRef != NULL)
-//     {
-//         NSDictionary *exif = (__bridge NSDictionary *)CGImageSourceCopyPropertiesAtIndex(mySourceRef,0,NULL);
-//         CFRelease(mySourceRef);
-//
-//         NSDictionary *mutableExif = [exif mutableCopy];
-//         [mutableExif setValue:path forKey:@"originalUri"];
-//         resolve(mutableExif);
-//     }
 }
 
 /**
