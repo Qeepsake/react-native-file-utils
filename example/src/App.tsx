@@ -19,7 +19,7 @@ export default function App() {
   const launchPicker = async (pickUsing: 'id' | 'file path') => {
     const pickerResult = await launchImageLibrary({
       includeExtra: true,
-      mediaType: 'photo',
+      mediaType: 'mixed',
     });
 
     setResult(0);
@@ -57,6 +57,7 @@ export default function App() {
       console.dir(timestamp);
     } else {
       const timestamp = await getTimestamp(firstAsset.id!, mediaType);
+      console.log('timestamp:');
       console.dir(timestamp);
     }
   };

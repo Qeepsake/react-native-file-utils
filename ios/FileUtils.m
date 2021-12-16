@@ -137,12 +137,16 @@ RCT_EXPORT_METHOD(
         // If not an image, get last modified date
         } else {
             NSError *error = nil;
-            NSURL *fileUrl = [NSURL fileURLWithPath:pathWithoutFilePrefix];
+            NSURL *referenceUrl = [NSURL URLWithString:path];
             NSDate *fileDate;
-            [fileUrl getResourceValue:&fileDate forKey:NSURLContentModificationDateKey error:&error];
+            [referenceUrl getResourceValue:&fileDate forKey:NSURLContentModificationDateKey error:&error];
             if (!error)
             {
-                resolve(fileDate);
+                NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+                [dateFormatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"];
+                NSString *dateString = [dateFormatter stringFromDate:fileDate];
+                
+                resolve(dateString);
                 return;
             }
         }
