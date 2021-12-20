@@ -57,6 +57,7 @@ RCT_EXPORT_METHOD(
  */
 RCT_EXPORT_METHOD(
                   getMimeType:(NSString *)path
+                  fileType:(NSString *)type
                   resolver: (RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
