@@ -53,6 +53,7 @@ RCT_EXPORT_METHOD(
 /**
  * Gets the MIME type of the file from the passed in URL. The file passed in can be a video or image file format.
  * @param path - The video or image file path to get the MIME type of.
+ * @param type - Either 'video' or 'image' so the method knows how to process the media file.
  * @returns The MIME type string of the file from the passed URL.
  */
 RCT_EXPORT_METHOD(
@@ -83,6 +84,7 @@ RCT_EXPORT_METHOD(
  * Gets the original date time of the video or image file based on the path passed in. The timestamp is retrieved from the Exif data on the
  * image or video file. Note: Either asset-libarary path or full file path may be passed in.
  * @param path - The video or image file path to get the timestamp of.
+ * @param type - Either 'video' or 'image' so the method knows how to process the media file.
  * @returns The datetime of the image or video file from the file's Exif data.
  */
 RCT_EXPORT_METHOD(
