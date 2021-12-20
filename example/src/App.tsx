@@ -17,48 +17,52 @@ export default function App() {
   }, []);
 
   const launchPicker = async (pickUsing: 'id' | 'file path') => {
-    const pickerResult = await launchImageLibrary({
-      includeExtra: true,
-      mediaType: 'mixed',
-    });
+    try {
+      const pickerResult = await launchImageLibrary({
+        includeExtra: true,
+        mediaType: 'mixed',
+      });
 
-    setResult(0);
-    console.dir(pickerResult);
+      setResult(0);
+      console.dir(pickerResult);
 
-    const asset = pickerResult.assets;
-    if (!asset) return;
+      const asset = pickerResult.assets;
+      if (!asset) return;
 
-    const firstAsset = asset[0];
-    const uri = firstAsset.uri;
-    if (!uri) return;
+      const firstAsset = asset[0];
+      const uri = firstAsset.uri;
+      if (!uri) return;
 
-    const mediaType = firstAsset.type?.includes('image') ? 'image' : 'video';
+      const mediaType = firstAsset.type?.includes('image') ? 'image' : 'video';
 
-    console.log(uri);
+      console.log(uri);
 
-    console.log('Results from @qeepsake/react-native-file-utils:');
-    console.log('-------------');
+      console.log('Results from @qeepsake/react-native-file-utils:');
+      console.log('-------------');
 
-    const duration = await getDuration(uri);
-    console.log('duration:');
-    console.log(duration);
+      const duration = await getDuration(uri, mediaType);
+      console.log('duration:');
+      console.log(duration);
 
-    const dimensions = await getDimensions(uri, mediaType);
-    console.log('dimensions:');
-    console.dir(dimensions);
+      const dimensions = await getDimensions(uri, mediaType);
+      console.log('dimensions:');
+      console.dir(dimensions);
 
-    const mimeType = await getMimeType(uri);
-    console.log('mimeType:');
-    console.dir(mimeType);
+      const mimeType = await getMimeType(uri, mediaType);
+      console.log('mimeType:');
+      console.dir(mimeType);
 
-    if (pickUsing === 'file path') {
-      const timestamp = await getTimestamp(uri, mediaType);
-      console.log('timestamp:');
-      console.dir(timestamp);
-    } else {
-      const timestamp = await getTimestamp(firstAsset.id!, mediaType);
-      console.log('timestamp:');
-      console.dir(timestamp);
+      if (pickUsing === 'file path') {
+        const timestamp = await getTimestamp(uri, mediaType);
+        console.log('timestamp:');
+        console.dir(timestamp);
+      } else {
+        const timestamp = await getTimestamp(firstAsset.id!, mediaType);
+        console.log('timestamp:');
+        console.dir(timestamp);
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 

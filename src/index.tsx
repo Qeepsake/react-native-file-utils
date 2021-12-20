@@ -23,8 +23,17 @@ const FileUtils = NativeModules.FileUtils
  * @param uri The full on device uri for the media item.
  * @returns Duration of the video in number of seconds.
  */
-export function getDuration(uri: string): Promise<number> {
-  return FileUtils.getDuration(uri);
+export async function getDuration(
+  uri: string,
+  mediaType: 'video' | 'image'
+): Promise<number> {
+  try {
+    if (mediaType !== 'video') return 0;
+    return FileUtils.getDuration(uri);
+  } catch (error) {
+    console.warn(`Can not get duration for ${uri}`);
+    return 0;
+  }
 }
 
 /**
@@ -45,8 +54,11 @@ export function getDimensions(
  * @param uri The full on device uri for the media item.
  * @returns The Mime type of the media file.
  */
-export function getMimeType(uri: string): Promise<string> {
-  return FileUtils.getMimeType(uri);
+export function getMimeType(
+  uri: string,
+  mediaType: 'video' | 'image'
+): Promise<string> {
+  return FileUtils.getMimeType(uri, mediaType);
 }
 
 /**
@@ -58,7 +70,7 @@ export function getMimeType(uri: string): Promise<string> {
  */
 export function getTimestamp(
   uri: string,
-  fileType: 'image' | 'video'
+  mediaType: 'image' | 'video'
 ): Promise<Date> {
-  return FileUtils.getTimestamp(uri, fileType);
+  return FileUtils.getTimestamp(uri, mediaType);
 }
