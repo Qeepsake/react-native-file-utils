@@ -17,8 +17,6 @@ jobs:
           node-version: 12
       - name: Install dependencies
         run: npm ci
-      - name: Typescript
-        run: npm run typescript
       - name: Release
         run: npm run prepare
       - name: Release
