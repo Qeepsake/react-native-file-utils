@@ -1,6 +1,6 @@
 {
   "name": "@qeepsake/react-native-file-utils",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Extract the MIME type of a file with React Native on iOS and Android (uses Java and Obj-C, not Node)",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
