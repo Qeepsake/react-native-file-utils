@@ -1,5 +1,6 @@
 import { NativeModules, Platform } from 'react-native';
 import type { MediaSize } from './types/MediaSize';
+import { getReactNativeMediaSize } from './utils/get-react-rative-image-size';
 
 const LINKING_ERROR =
   `The package '@qeepsake/react-native-file-utils' doesn't seem to be linked. Make sure: \n\n` +
@@ -27,13 +28,8 @@ export async function getDuration(
   uri: string,
   mediaType: 'video' | 'image'
 ): Promise<number> {
-  try {
-    if (mediaType !== 'video') return 0;
-    return FileUtils.getDuration(uri);
-  } catch (error) {
-    console.warn(`Can not get duration for ${uri}`);
-    return 0;
-  }
+  if (mediaType !== 'video') return 0;
+  return FileUtils.getDuration(uri);
 }
 
 /**
@@ -42,11 +38,15 @@ export async function getDuration(
  * @param mediaType - Either 'image' or 'video. If passing an image, 0 will always be returned.
  * @returns MediaSize with height and width of the media item in pixels.
  */
-export function getDimensions(
+export async function getDimensions(
   uri: string,
   mediaType: 'video' | 'image'
 ): Promise<MediaSize> {
-  return FileUtils.getDimensions(uri, mediaType);
+  if (mediaType === 'image') {
+    return await getReactNativeMediaSize(uri);
+  }
+
+  return FileUtils.getVideoDimensions(uri);
 }
 
 /**
@@ -54,11 +54,8 @@ export function getDimensions(
  * @param uri The full on device uri for the media item.
  * @returns The Mime type of the media file.
  */
-export function getMimeType(
-  uri: string,
-  mediaType: 'video' | 'image'
-): Promise<string> {
-  return FileUtils.getMimeType(uri, mediaType);
+export function getMimeType(uri: string): Promise<string> {
+  return FileUtils.getMimeType(uri);
 }
 
 /**

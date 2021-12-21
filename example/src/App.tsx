@@ -48,7 +48,7 @@ export default function App() {
       console.log('dimensions:');
       console.dir(dimensions);
 
-      const mimeType = await getMimeType(uri, mediaType);
+      const mimeType = await getMimeType(uri);
       console.log('mimeType:');
       console.dir(mimeType);
 

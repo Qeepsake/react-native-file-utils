@@ -31,7 +31,7 @@ RCT_EXPORT_METHOD(
         
         if (isnan(duration)) {
             reject(
-                   @"QSRNFU-01",
+                   @"INVALID_DURATION_ERROR",
                    @"The duration of the video file is either invalid or indefinite.",
                    nil
                    );
@@ -42,7 +42,7 @@ RCT_EXPORT_METHOD(
         resolve(result);
     } else {
         reject(
-               @"QSRNFU-02",
+               @"GET_DURATION_MALFORMED_PATH_ERROR",
                @"The path provided is malformed. Unable to obtain a reference URL from the path.",
                nil
                );
@@ -53,12 +53,10 @@ RCT_EXPORT_METHOD(
 /**
  * Gets the MIME type of the file from the passed in URL. The file passed in can be a video or image file format.
  * @param path - The video or image file path to get the MIME type of.
- * @param type - Either 'video' or 'image' so the method knows how to process the media file.
  * @returns The MIME type string of the file from the passed URL.
  */
 RCT_EXPORT_METHOD(
                   getMimeType:(NSString *)path
-                  fileType:(NSString *)type
                   resolver: (RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
@@ -73,7 +71,7 @@ RCT_EXPORT_METHOD(
         resolve((NSString *)CFBridgingRelease(MIMEType));
     } else {
         reject(
-               @"QSRNFU-10",
+               @"GET_MIME_TYPE_MALFORMED_PATH_ERROR",
                @"The path provided is malformed. Unable to obtain a reference URL from the path.",
                nil
                );
@@ -129,7 +127,7 @@ RCT_EXPORT_METHOD(
             NSData* fileData = [NSData dataWithContentsOfFile:pathWithoutFilePrefix];
             CGImageSourceRef mySourceRef = CGImageSourceCreateWithData((CFDataRef)fileData, NULL);
             if (mySourceRef != NULL)
-            {
+            {               
                 NSDictionary *properties = (__bridge NSDictionary *)CGImageSourceCopyPropertiesAtIndex(mySourceRef,0,NULL);
                 NSDictionary *exif = [properties objectForKey:(NSString *)kCGImagePropertyExifDictionary];
                 NSDictionary *datetime = [exif objectForKey:(NSString *)kCGImagePropertyExifDateTimeOriginal];
@@ -143,6 +141,7 @@ RCT_EXPORT_METHOD(
             NSURL *referenceUrl = [NSURL URLWithString:path];
             NSDate *fileDate;
             [referenceUrl getResourceValue:&fileDate forKey:NSURLContentModificationDateKey error:&error];
+            
             if (!error)
             {
                 NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -152,82 +151,50 @@ RCT_EXPORT_METHOD(
                 resolve(dateString);
                 return;
             }
+            
+            reject(
+                   @"GET_TIMESTAMP_CONTENT_MODIFICATION_DATE_ERROR",
+                   @"Error getting file data for file.",
+                   error
+                   );
         }
     }
 }
 
 /**
- * Gets the pixel dimensions, height and width (x,y), of the video or image file based on the file path passed in.
- * @param path - The video or image file path to get the dimensions of.
- * @param type - Either 'video' or 'image' so the method knows how to process the media file.
+ * Gets the pixel dimensions, height and width (x,y), of the video file based on the file path passed in.
+ * @param path - The video file path to get the dimensions of.
  * @returns The height and width (x,y), of the video or image in pixels.
  */
 RCT_EXPORT_METHOD(
-                  getDimensions:(NSString *)path
-                  type: (NSString *)type
+                  getVideoDimensions:(NSString *)path
                   resolver: (RCTPromiseResolveBlock)resolve
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
 {
     NSURL *referenceUrl = [NSURL URLWithString:path];
+    AVURLAsset *asset = [AVURLAsset URLAssetWithURL:referenceUrl options:nil];
+    NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
     
-    if ([type isEqualToString:@"image"]) {
-        CGImageSourceRef sourceRef = CGImageSourceCreateWithURL((CFURLRef)referenceUrl, NULL);
-        
-        if (sourceRef == nil) {
-            reject(
-                   @"QSRNFU-30",
-                   @"The method could not initialize the image from the specified file",
-                   nil
-                   );
-            return;
-        }
-        
-        CGFloat width = 0.0f, height = 0.0f;
-        CFDictionaryRef imageProperties = CGImageSourceCopyPropertiesAtIndex(sourceRef, 0, NULL);
-        CFRelease(sourceRef);
-        
-        CFNumberRef widthNum  = CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelWidth);
-        if (widthNum != NULL) {
-            CFNumberGetValue(widthNum, kCFNumberCGFloatType, &width);
-        }
-
-        CFNumberRef heightNum = CFDictionaryGetValue(imageProperties, kCGImagePropertyPixelHeight);
-        if (heightNum != NULL) {
-            CFNumberGetValue(heightNum, kCFNumberCGFloatType, &height);
-        }
+    if ([tracks count] > 0) {
+        AVAssetTrack *track = [tracks objectAtIndex:0];
         
         NSDictionary *dimensions = @{
-              @"height":@(height),
-              @"width":@(width),
-              };
-        
-        resolve(dimensions);
-        return;
-    } else if ([type isEqualToString:@"video"]){
-        AVURLAsset *asset = [AVURLAsset URLAssetWithURL:referenceUrl options:nil];
-        NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-        
-        if ([tracks count] > 0) {
-            AVAssetTrack *track = [tracks objectAtIndex:0];
-            
-            NSDictionary *dimensions = @{
-                  @"height":@(track.naturalSize.height),
-                  @"width":@(track.naturalSize.width),
-                  };
-            
-            resolve(dimensions);
-            return;
-        }
-
-        NSDictionary *dimensions = @{
-              @"height":@0,
-              @"width":@0,
+              @"height":@(track.naturalSize.height),
+              @"width":@(track.naturalSize.width),
               };
         
         resolve(dimensions);
         return;
     }
+
+    NSDictionary *dimensions = @{
+          @"height":@0,
+          @"width":@0,
+          };
+    
+    resolve(dimensions);
+    return;
 }
 
 @end
