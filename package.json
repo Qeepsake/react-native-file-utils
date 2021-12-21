@@ -36,6 +36,7 @@
     "postinstall": "husky install",
     "semantic-release": "semantic-release"
   },
+  "private": false,
   "keywords": [
     "react-native",
     "ios",
@@ -49,6 +50,7 @@
   },
   "homepage": "https://github.com/Qeepsake/react-native-file-utils#readme",
   "publishConfig": {
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
