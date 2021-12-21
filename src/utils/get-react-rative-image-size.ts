@@ -3,7 +3,7 @@ import type { MediaSize } from 'src/types/MediaSize';
 
 /**
  * Wraps the native react native image size util to return a promise with the MediaSize.
- * @param uri The file Uri path to the image.
+ * @param uri The file Uri path to the image
  * @returns Promise with MediaSize
  */
 export function getReactNativeMediaSize(uri: string): Promise<MediaSize> {
