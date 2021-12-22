@@ -59,7 +59,7 @@ export function getMimeType(uri: string): Promise<string> {
 }
 
 /**
- * Gets the date time of the media file at the passed Uri. The date time is retrieved
+ * Gets the string date time of the media file at the passed Uri. The date time is retrieved
  * from the Exif data if an image is passed and creation date if a video is passed.
  * @param uri The full file uri or the asset-library path for the media item.
  * @param fileType Either image or video.
@@ -68,6 +68,6 @@ export function getMimeType(uri: string): Promise<string> {
 export function getTimestamp(
   uri: string,
   mediaType: 'image' | 'video'
-): Promise<Date> {
+): Promise<string> {
   return FileUtils.getTimestamp(uri, mediaType);
 }

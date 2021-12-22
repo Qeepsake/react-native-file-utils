@@ -121,7 +121,7 @@ public class FileUtilsModule extends ReactContextBaseJavaModule {
    *
    * @param uri       - The video or image file path to get the timestamp of.
    * @param mediaType - Either 'video' or 'image' so the method knows how to process the media file.
-   * @returns ISO datetime of the image or video file from the file's Exif data.
+   * @returns String ISO datetime of the image or video file from the file's Exif data.
    */
   @ReactMethod
   public void getTimestamp(String uri, String mediaType, Promise promise) {

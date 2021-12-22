@@ -1,8 +1,6 @@
 # Qeepsake React Native File Utils
 
-## NOTE: Currently a work in progress. Not production ready.
-
-Extracts information about media files including MIME type, duration (vide), dimensions, or timestamp of a media file with React Native on iOS and Android (uses Java and Obj-C, not Node).
+Extracts information from image and video files including MIME type, duration (video), dimensions, and timestamp. The library work on iOS and Android and uses Java and Obj-C native library (not Node).
 
 ## Installation
 
@@ -49,7 +47,7 @@ Gets the timestamp (js Date) of the media file at the passed Uri.
 ```js
 import { getTimestamp } from '@qeepsake/react-native-file-utils';
 
-const timestamp = await getTimestamp('file://<media-path>');
+const timestamp = await getTimestamp('file://<media-path>', 'video');
 ```
 
 ## Contributing

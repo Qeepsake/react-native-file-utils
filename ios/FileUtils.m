@@ -83,7 +83,7 @@ RCT_EXPORT_METHOD(
  * image or video file. Note: Either asset-libarary path or full file path may be passed in.
  * @param path - The video or image file path to get the timestamp of.
  * @param type - Either 'video' or 'image' so the method knows how to process the media file.
- * @returns The datetime of the image or video file from the file's Exif data.
+ * @returns The string timestamp of the image or video file.
  */
 RCT_EXPORT_METHOD(
                   getTimestamp:(NSString *)path
