@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { StyleSheet, View, Text, Button } from 'react-native';
 import {
-  getDuration,
+  getVideoDuration,
   getDimensions,
   getMimeType,
   getTimestamp,
@@ -40,7 +40,7 @@ export default function App() {
       console.log('Results from @qeepsake/react-native-file-utils:');
       console.log('-------------');
 
-      const duration = await getDuration(uri, mediaType);
+      const duration = await getVideoDuration(uri);
       console.log('duration:');
       console.log(duration);
 
