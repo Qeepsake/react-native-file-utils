@@ -61,6 +61,103 @@ RCT_EXPORT_METHOD(
                   rejecter:(RCTPromiseRejectBlock)reject
                   )
 {
+    NSMutableDictionary *ListOfMimeTypes = [[NSMutableDictionary alloc] init];
+    [ListOfMimeTypes setObject:@"image/jpeg" forKey:@"jpg"];
+      [ListOfMimeTypes setObject:@"html" forKey:@"text/html"];
+      [ListOfMimeTypes setObject:@"htm" forKey:@"text/html"];
+      [ListOfMimeTypes setObject:@"shtml" forKey:@"text/html"];
+      [ListOfMimeTypes setObject:@"css" forKey:@"text/css"];
+      [ListOfMimeTypes setObject:@"xml" forKey:@"text/xml"];
+      [ListOfMimeTypes setObject:@"gif" forKey:@"image/gif"];
+      [ListOfMimeTypes setObject:@"jpeg" forKey:@"image/jpeg"];
+      [ListOfMimeTypes setObject:@"jpg" forKey:@"image/jpeg"];
+      [ListOfMimeTypes setObject:@"js" forKey:@"application/javascript"];
+      [ListOfMimeTypes setObject:@"atom" forKey:@"application/atom+xml"];
+      [ListOfMimeTypes setObject:@"rss" forKey:@"application/rss+xml"];
+      [ListOfMimeTypes setObject:@"mml" forKey:@"text/mathml"];
+      [ListOfMimeTypes setObject:@"txt" forKey:@"text/plain"];
+      [ListOfMimeTypes setObject:@"jad" forKey:@"text/vnd.sun.j2me.app-descriptor"];
+      [ListOfMimeTypes setObject:@"wml" forKey:@"text/vnd.wap.wml"];
+      [ListOfMimeTypes setObject:@"htc" forKey:@"text/x-component"];
+      [ListOfMimeTypes setObject:@"png" forKey:@"image/png"];
+      [ListOfMimeTypes setObject:@"tif" forKey:@"image/tiff"];
+      [ListOfMimeTypes setObject:@"tiff" forKey:@"image/tiff"];
+      [ListOfMimeTypes setObject:@"wbmp" forKey:@"image/vnd.wap.wbmp"];
+      [ListOfMimeTypes setObject:@"ico" forKey:@"image/x-icon"];
+      [ListOfMimeTypes setObject:@"jng" forKey:@"image/x-jng"];
+      [ListOfMimeTypes setObject:@"bmp" forKey:@"image/x-ms-bmp"];
+      [ListOfMimeTypes setObject:@"svg" forKey:@"image/svg+xml"];
+      [ListOfMimeTypes setObject:@"svgz" forKey:@"image/svg+xml"];
+      [ListOfMimeTypes setObject:@"webp" forKey:@"image/webp"];
+      [ListOfMimeTypes setObject:@"woff" forKey:@"application/font-woff"];
+      [ListOfMimeTypes setObject:@"jar" forKey:@"application/java-archive"];
+      [ListOfMimeTypes setObject:@"war" forKey:@"application/java-archive"];
+      [ListOfMimeTypes setObject:@"ear" forKey:@"application/java-archive"];
+      [ListOfMimeTypes setObject:@"json" forKey:@"application/json"];
+      [ListOfMimeTypes setObject:@"hqx" forKey:@"application/mac-binhex40"];
+      [ListOfMimeTypes setObject:@"doc" forKey:@"application/msword"];
+      [ListOfMimeTypes setObject:@"pdf" forKey:@"application/pdf"];
+      [ListOfMimeTypes setObject:@"ps" forKey:@"application/postscript"];
+      [ListOfMimeTypes setObject:@"eps" forKey:@"application/postscript"];
+      [ListOfMimeTypes setObject:@"ai" forKey:@"application/postscript"];
+      [ListOfMimeTypes setObject:@"rtf" forKey:@"application/rtf"];
+      [ListOfMimeTypes setObject:@"m3u8" forKey:@"application/vnd.apple.mpegurl"];
+      [ListOfMimeTypes setObject:@"xls" forKey:@"application/vnd.ms-excel"];
+      [ListOfMimeTypes setObject:@"eot" forKey:@"application/vnd.ms-fontobject"];
+      [ListOfMimeTypes setObject:@"ppt" forKey:@"application/vnd.ms-powerpoint"];
+      [ListOfMimeTypes setObject:@"wmlc" forKey:@"application/vnd.wap.wmlc"];
+      [ListOfMimeTypes setObject:@"kml" forKey:@"application/vnd.google-earth.kml+xml"];
+      [ListOfMimeTypes setObject:@"kmz" forKey:@"application/vnd.google-earth.kmz"];
+      [ListOfMimeTypes setObject:@"7z" forKey:@"application/x-7z-compressed"];
+      [ListOfMimeTypes setObject:@"cco" forKey:@"application/x-cocoa"];
+      [ListOfMimeTypes setObject:@"jardiff" forKey:@"application/x-java-archive-diff"];
+      [ListOfMimeTypes setObject:@"jnlp" forKey:@"application/x-java-jnlp-file"];
+      [ListOfMimeTypes setObject:@"run" forKey:@"application/x-makeself"];
+      [ListOfMimeTypes setObject:@"pl" forKey:@"application/x-perl"];
+      [ListOfMimeTypes setObject:@"pm" forKey:@"application/x-perl"];
+      [ListOfMimeTypes setObject:@"prc" forKey:@"application/x-pilot"];
+      [ListOfMimeTypes setObject:@"pdb" forKey:@"application/x-pilot"];
+      [ListOfMimeTypes setObject:@"rar" forKey:@"application/x-rar-compressed"];
+      [ListOfMimeTypes setObject:@"rpm" forKey:@"application/x-redhat-package-manager"];
+      [ListOfMimeTypes setObject:@"sea" forKey:@"application/x-sea"];
+      [ListOfMimeTypes setObject:@"swf" forKey:@"application/x-shockwave-flash"];
+      [ListOfMimeTypes setObject:@"sit" forKey:@"application/x-stuffit"];
+      [ListOfMimeTypes setObject:@"tcl" forKey:@"application/x-tcl"];
+      [ListOfMimeTypes setObject:@"tk" forKey:@"application/x-tcl"];
+      [ListOfMimeTypes setObject:@"der" forKey:@"application/x-x509-ca-cert"];
+      [ListOfMimeTypes setObject:@"pem" forKey:@"application/x-x509-ca-cert"];
+      [ListOfMimeTypes setObject:@"crt" forKey:@"application/x-x509-ca-cert"];
+      [ListOfMimeTypes setObject:@"xpi" forKey:@"application/x-xpinstall"];
+      [ListOfMimeTypes setObject:@"xhtml" forKey:@"application/xhtml+xml"];
+      [ListOfMimeTypes setObject:@"xspf" forKey:@"application/xspf+xml"];
+      [ListOfMimeTypes setObject:@"zip" forKey:@"application/zip"];
+      [ListOfMimeTypes setObject:@"epub" forKey:@"application/epub+zip"];
+      [ListOfMimeTypes setObject:@"docx" forKey:@"application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
+      [ListOfMimeTypes setObject:@"xlsx" forKey:@"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"];
+      [ListOfMimeTypes setObject:@"pptx" forKey:@"application/vnd.openxmlformats-officedocument.presentationml.presentation"];
+      [ListOfMimeTypes setObject:@"mid" forKey:@"audio/midi"];
+      [ListOfMimeTypes setObject:@"midi" forKey:@"audio/midi"];
+      [ListOfMimeTypes setObject:@"kar" forKey:@"audio/midi"];
+      [ListOfMimeTypes setObject:@"mp3" forKey:@"audio/mpeg"];
+      [ListOfMimeTypes setObject:@"ogg" forKey:@"audio/ogg"];
+      [ListOfMimeTypes setObject:@"m4a" forKey:@"audio/x-m4a"];
+      [ListOfMimeTypes setObject:@"ra" forKey:@"audio/x-realaudio"];
+      [ListOfMimeTypes setObject:@"3gpp" forKey:@"video/3gpp"];
+      [ListOfMimeTypes setObject:@"3gp" forKey:@"video/3gpp"];
+      [ListOfMimeTypes setObject:@"ts" forKey:@"video/mp2t"];
+      [ListOfMimeTypes setObject:@"mp4" forKey:@"video/mp4"];
+      [ListOfMimeTypes setObject:@"mpeg" forKey:@"video/mpeg"];
+      [ListOfMimeTypes setObject:@"mpg" forKey:@"video/mpeg"];
+      [ListOfMimeTypes setObject:@"mov" forKey:@"video/quicktime"];
+      [ListOfMimeTypes setObject:@"webm" forKey:@"video/webm"];
+      [ListOfMimeTypes setObject:@"flv" forKey:@"video/x-flv"];
+      [ListOfMimeTypes setObject:@"m4v" forKey:@"video/x-m4v"];
+      [ListOfMimeTypes setObject:@"mng" forKey:@"video/x-mng"];
+      [ListOfMimeTypes setObject:@"asx" forKey:@"video/x-ms-asf"];
+      [ListOfMimeTypes setObject:@"asf" forKey:@"video/x-ms-asf"];
+      [ListOfMimeTypes setObject:@"wmv" forKey:@"video/x-ms-wmv"];
+      [ListOfMimeTypes setObject:@"avi" forKey:@"video/x-msvideo"];
+
     NSURL *referenceUrl = [NSURL URLWithString:path];
     CFStringRef fileExtension = (__bridge CFStringRef)[referenceUrl pathExtension];
     CFStringRef UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, fileExtension, NULL);
@@ -69,6 +166,10 @@ RCT_EXPORT_METHOD(
     if (UTI != nil) {
         CFRelease(UTI);
         resolve((NSString *)CFBridgingRelease(MIMEType));
+    } else if(fileExtension != nil) { // Use a fallback lookup array to determine MIME type
+        NSString *lookupKey = (__bridge NSString *)fileExtension;
+        NSString *lookupResult = [ListOfMimeTypes objectForKey:[lookupKey lowercaseString]];
+        resolve(lookupResult);
     } else {
         reject(
                @"GET_MIME_TYPE_MALFORMED_PATH_ERROR",
