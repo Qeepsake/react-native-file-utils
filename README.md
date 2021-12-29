@@ -15,9 +15,9 @@ npm install @qeepsake/react-native-file-utils
 Gets the duration of the video in seconds.
 
 ```js
-import { getDuration } from '@qeepsake/react-native-file-utils';
+import { getVideoDuration } from '@qeepsake/react-native-file-utils';
 
-const durationMs = await getDuration('file://<media-path>');
+const durationMs = await getVideoDuration('file://<media-path>');
 ```
 
 ### Get the media file dimensions in pixels
@@ -52,6 +52,16 @@ import { getTimestamp } from '@qeepsake/react-native-file-utils';
 const timestamp = await getTimestamp('file://<media-path>', 'video');
 ```
 
+## Supported Schemes
+
+In this table, you can see what type of URI can be handled by each method.
+
+| Method Name      | iOS                             | Android    |
+| -----------      | ----------------------          | ---------- |
+| getTimestamp     | `file://`, `assets-library://`  | `file://`
+| getVideoDuration | `file://`                       | `file://`
+| getMimeType      | `file://`, `ph://`              | `file://`
+| getDimensions    | `file://`,                      | `file://`
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
