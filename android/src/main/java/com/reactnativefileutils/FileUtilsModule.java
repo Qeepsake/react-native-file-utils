@@ -157,7 +157,7 @@ public class FileUtilsModule extends ReactContextBaseJavaModule {
             String timestamp = exif.getAttribute(ExifInterface.TAG_DATETIME);
 
             Date date = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US).parse(timestamp);
-            String formattedDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'", Locale.US).format(date);
+            String formattedDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US).format(date);
 
             promise.resolve(formattedDate);
           } else {
@@ -171,7 +171,7 @@ public class FileUtilsModule extends ReactContextBaseJavaModule {
         MediaMetadataRetriever retriever = GetMediaMetadataRetriever(fileUri);
         String timestamp = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE);
         Date date = new SimpleDateFormat("yyyyMMdd'T'HHmmss", Locale.US).parse(timestamp);
-        String formattedDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'", Locale.US).format(date);
+        String formattedDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US).format(date);
         retriever.release();
 
         promise.resolve(formattedDate);
