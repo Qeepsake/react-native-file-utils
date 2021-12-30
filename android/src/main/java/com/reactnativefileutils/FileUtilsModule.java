@@ -1,9 +1,12 @@
 package com.reactnativefileutils;
 
+import android.content.ContentResolver;
 import android.media.ExifInterface;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
+import android.webkit.URLUtil;
 
 import androidx.annotation.NonNull;
 
@@ -16,6 +19,7 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
 
 import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -25,9 +29,11 @@ import java.util.Locale;
 @ReactModule(name = FileUtilsModule.NAME)
 public class FileUtilsModule extends ReactContextBaseJavaModule {
   public static final String NAME = "FileUtils";
+  public ReactApplicationContext mContext;
 
   public FileUtilsModule(ReactApplicationContext reactContext) {
     super(reactContext);
+    mContext = reactContext;
   }
 
   @Override
@@ -90,28 +96,35 @@ public class FileUtilsModule extends ReactContextBaseJavaModule {
    */
   @ReactMethod
   public void getMimeType(String uri, Promise promise) {
-    String type = null;
-    String extension = MimeTypeMap.getFileExtensionFromUrl(uri);
-
-    // Typically images do have an extension at this point while videos on Android from the picker
-    // do not have an extension. If there's no extension, try to get the extension from the
-    // contents as the file is likely a video.
-    if (extension != null && !extension.isEmpty()) {
-      type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
-      promise.resolve(type);
-      return;
-    }
-
-    try {
-      Uri fileUri = Uri.parse(uri);
-      MediaMetadataRetriever retriever = GetMediaMetadataRetriever(fileUri);
-      String mimeType = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE);
-      retriever.release();
-
+    if(URLUtil.isContentUrl(uri)) {
+      Uri contentUri = Uri.parse(uri);
+      ContentResolver contentResolver = mContext.getContentResolver();
+      String mimeType = contentResolver.getType(contentUri);
       promise.resolve(mimeType);
-      return;
-    } catch (Exception e) {
-      promise.reject("Error getting mime type", e);
+    } else if(URLUtil.isFileUrl(uri)) {
+      String type = null;
+      String extension = MimeTypeMap.getFileExtensionFromUrl(uri);
+
+      // Typically images do have an extension at this point while videos on Android from the picker
+      // do not have an extension. If there's no extension, try to get the extension from the
+      // contents as the file is likely a video.
+      if (extension != null && !extension.isEmpty()) {
+        type = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+        promise.resolve(type);
+        return;
+      }
+
+      try {
+        Uri fileUri = Uri.parse(uri);
+        MediaMetadataRetriever retriever = GetMediaMetadataRetriever(fileUri);
+        String mimeType = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_MIMETYPE);
+        retriever.release();
+
+        promise.resolve(mimeType);
+        return;
+      } catch (Exception e) {
+        promise.reject("Error getting mime type", e);
+      }
     }
   }
 
@@ -130,18 +143,29 @@ public class FileUtilsModule extends ReactContextBaseJavaModule {
 
       // Handle getting mime type for images
       if (mediaType.equalsIgnoreCase("image")) {
-        InputStream inputStream = getReactApplicationContext().getContentResolver().openInputStream(fileUri);
-        ExifInterface exif = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-          exif = new ExifInterface(inputStream);
+        InputStream inputStream;
+
+        if(URLUtil.isContentUrl(uri)) {
+          inputStream = mContext.getContentResolver().openInputStream(fileUri);
+        } else if(URLUtil.isFileUrl(uri)) {
+          inputStream = new FileInputStream(uri);
         }
 
-        String timestamp = exif.getAttribute(ExifInterface.TAG_DATETIME);
-        Date date = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US).parse(timestamp);
-        String formattedDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'", Locale.US).format(date);
+        if(inputStream) {
+          if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            ExifInterface exif = new ExifInterface(inputStream);
+            String timestamp = exif.getAttribute(ExifInterface.TAG_DATETIME);
 
-        promise.resolve(formattedDate);
+            Date date = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US).parse(timestamp);
+            String formattedDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'", Locale.US).format(date);
 
+            promise.resolve(formattedDate);
+          } else {
+            promise.reject("Android version must be above: " + android.os.Build.VERSION_CODES.N);
+          }
+        } else {
+          promise.reject("File path not supported: " + uri);
+        }
         // Handle getting mime type for videos
       } else {
         MediaMetadataRetriever retriever = GetMediaMetadataRetriever(fileUri);
