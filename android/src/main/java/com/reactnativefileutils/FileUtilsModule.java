@@ -143,7 +143,7 @@ public class FileUtilsModule extends ReactContextBaseJavaModule {
 
       // Handle getting mime type for images
       if (mediaType.equalsIgnoreCase("image")) {
-        InputStream inputStream;
+        InputStream inputStream = null;
 
         if(URLUtil.isContentUrl(uri)) {
           inputStream = mContext.getContentResolver().openInputStream(fileUri);
@@ -151,7 +151,7 @@ public class FileUtilsModule extends ReactContextBaseJavaModule {
           inputStream = new FileInputStream(uri);
         }
 
-        if(inputStream) {
+        if(inputStream != null) {
           if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             ExifInterface exif = new ExifInterface(inputStream);
             String timestamp = exif.getAttribute(ExifInterface.TAG_DATETIME);
