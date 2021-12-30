@@ -58,9 +58,9 @@ In this table, you can see what type of URI can be handled by each method.
 
 | Method Name      | iOS                             | Android    |
 | -----------      | ----------------------          | ---------- |
-| getTimestamp     | `file://`, `assets-library://`  | `file://`
+| getTimestamp     | `file://`, `assets-library://`  | `file://`, `content://`
 | getVideoDuration | `file://`                       | `file://`
-| getMimeType      | `file://`, `ph://`              | `file://`
+| getMimeType      | `file://`, `ph://`              | `file://`, `content://`
 | getDimensions    | `file://`,                      | `file://`
 ## Contributing
 
