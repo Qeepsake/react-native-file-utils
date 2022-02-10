@@ -19,7 +19,6 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.module.annotations.ReactModule;
 
 import java.io.FileDescriptor;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -143,13 +142,7 @@ public class FileUtilsModule extends ReactContextBaseJavaModule {
 
       // Handle getting mime type for images
       if (mediaType.equalsIgnoreCase("image")) {
-        InputStream inputStream = null;
-
-        if(URLUtil.isContentUrl(uri)) {
-          inputStream = mContext.getContentResolver().openInputStream(fileUri);
-        } else if(URLUtil.isFileUrl(uri)) {
-          inputStream = new FileInputStream(uri);
-        }
+        InputStream inputStream = mContext.getContentResolver().openInputStream(fileUri);
 
         if(inputStream != null) {
           if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
