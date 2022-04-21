@@ -149,25 +149,38 @@ public class FileUtilsModule extends ReactContextBaseJavaModule {
             ExifInterface exif = new ExifInterface(inputStream);
             String timestamp = exif.getAttribute(ExifInterface.TAG_DATETIME);
 
-            Date date = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US).parse(timestamp);
-            String formattedDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US).format(date);
+            // Timestamp can't be found in file
+            if(timestamp != null) {
+              Date date = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.US).parse(timestamp);
 
-            promise.resolve(formattedDate);
+              if (date != null) {
+                String formattedDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US).format(date);
+                promise.resolve(formattedDate);
+              } else {
+                promise.resolve(null);
+              }
+            } else {
+              promise.resolve(null);
+            }
           } else {
-            promise.reject("Android version must be above: " + android.os.Build.VERSION_CODES.N);
+            promise.reject("VERSION_NOT_SUPPORTED", "Android version must be above: " + android.os.Build.VERSION_CODES.N);
           }
         } else {
-          promise.reject("File path not supported: " + uri);
+          promise.reject("PATH_NOT_SUPPORTED", "File path not supported: " + uri);
         }
         // Handle getting mime type for videos
       } else {
         MediaMetadataRetriever retriever = GetMediaMetadataRetriever(fileUri);
         String timestamp = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DATE);
         Date date = new SimpleDateFormat("yyyyMMdd'T'HHmmss", Locale.US).parse(timestamp);
-        String formattedDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US).format(date);
-        retriever.release();
-
-        promise.resolve(formattedDate);
+        
+        if(date != null) {
+          String formattedDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US).format(date);
+          retriever.release();
+          promise.resolve(formattedDate);
+        } else {
+          promise.resolve(null);
+        }
       }
     } catch (Exception e) {
       promise.reject("Error getting timestamp of media file", e);
